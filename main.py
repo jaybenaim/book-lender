@@ -11,6 +11,7 @@ class Book:
         self.ISBN = ISBN 
     def __str__(self): 
         return f'{self.title} by {self.author}, ISBN: {self.ISBN} '
+
     @classmethod 
     # instantiate a Book 
     def create(cls, title, author, ISBN):
@@ -32,7 +33,7 @@ class Book:
         overdue_book = [] 
         for book in cls.on_loan: 
             # if current due date is 
-            if (due_date > time_now) == True: 
+            if due_date < datetime.now(): 
         #         return book 
                 overdue_book.append(book)
                 if len(overdue_book) == 0: 
@@ -59,12 +60,12 @@ class Book:
         if self.lent_out() == True: 
             return False 
         elif self.lent_out() == False: 
-            self.on_loan.append(Book)
+            self.due_date = Book.current_due_date() 
+            Book.on_shelf.remove(self) 
+            Book.on_loan.append(self)
             return True 
-        else: 
-            self.current_due_date() 
-            self.on_loan.append(Book)
-            return True 
+         
+            
 
     def return_to_library(self): 
         '''This instance method is how a book gets returned to the library.
@@ -76,19 +77,17 @@ class Book:
         if self.lent_out() == False: 
               return False  
         else: 
-            self.on_shelf.append(Book)
+            self.on_loan.remove(self)
+            self.on_shelf.append(self)
             date = self.current_due_date() 
             date = None 
             return True 
 
-    def lent_out(self): 
-        for book in Book.on_shelf: 
-            if book == self.title: 
-                # if the book is on the shelf and available for rent 
-                return True 
-            else: 
-                # if the book lent out 
-                return False   
+    def lent_out(self):  
+        if self in Book.on_shelf:  
+            return False 
+        else: 
+            return True   
             
 sister_outsider = Book.create("Sister Outsider", "Audre Lorde", "9781515905431")
 aint_i = Book.create("Ain't I a Woman?", "Bell Hooks", "9780896081307")
@@ -98,12 +97,8 @@ print(Book.browse().title) # "Ain't I a Woman?" (this value may be different for
 print(len(Book.on_shelf)) # 3
 print(len(Book.on_loan)) # 0
 print(sister_outsider.lent_out()) # False
-
 print(sister_outsider.borrow()) # True #######
-
-
 print(len(Book.on_shelf)) # 2
-
 print(len(Book.on_loan)) # 1 ###### 
 print(sister_outsider.lent_out()) # True
 print(sister_outsider.borrow()) # False
@@ -111,5 +106,5 @@ print(sister_outsider.current_due_date()) # 2017-02-25 20:52:20 -0500 (this valu
 print(len(Book.overdue_books())) # 0
 print(sister_outsider.return_to_library()) # True
 print(sister_outsider.lent_out()) # False
-print(len(Book.on_shelf)) # 2
+print(len(Book.on_shelf)) # 3
 print(len(Book.on_loan)) # 0
