@@ -6,7 +6,7 @@ class Book:
     on_shelf = []
     on_loan = []
     day = []
-    borrowed = 'False' 
+    borrowed = False
     def __init__(self, title, author, ISBN):
         self.title = title
         self.author = author
@@ -63,7 +63,7 @@ class Book:
         to borrow the book failed. Otherwise, use current_due_date to set the due_date
         of the book and move it from the collection 
         of available books to the collection of books on loan, then return True. """
-        Book.borrowed = 'True'
+        
         if self.lent_out() == True:
             return f"The Book is already out on loan."
         elif self.lent_out() == False:
@@ -96,8 +96,8 @@ class Book:
 
     @classmethod
     def renew(cls):
-        
-        if cls.borrowed == 'False': 
+
+        if cls.borrowed == False: 
             now = datetime.now()
             two_weeks = 60 * 60 * 24 * 14  # two weeks expressed in seconds
             future_timestamp = now.timestamp() + two_weeks * 2
@@ -105,16 +105,16 @@ class Book:
             month = f"{datetime.fromtimestamp(future_timestamp, tz=None).month}"
             year = f"{datetime.fromtimestamp(future_timestamp, tz=None).year}"
             cls.string = f" New Due Date {month}/{day}/{year}"
+            Book.borrowed = True
             return cls.string
-        else: 
+        if cls.borrowed == True: 
             return 'You cannot renew this book again'
+        
 
 
 sister_outsider = Book.create("Sister Outsider", "Audre Lorde", "9781515905431")
 aint_i = Book.create("Ain't I a Woman?", "Bell Hooks", "9780896081307")
-if_they_come = Book.create(
-    "If They Come in the Morning", "Angela Y. Davis", "0893880221"
-)
+if_they_come = Book.create("If They Come in the Morning", "Angela Y. Davis", "0893880221")
 
 
 print()
@@ -130,7 +130,7 @@ sister_outsider.lent_out()  # True
 print(sister_outsider.borrow())  # False
 print(sister_outsider.current_due_date())
 print(sister_outsider.renew())  
-# print(sister_outsider.renew())  
+print(sister_outsider.renew())
 # print(sister_outsider.current_due_date())
 # print(len(Book.overdue_books()))  # 0
 # print(sister_outsider.return_to_library())  # True
