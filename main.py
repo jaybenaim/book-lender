@@ -7,7 +7,8 @@ class Book:
     on_loan = []
     day = []
     borrowed = False
-    def __init__(self, title, author, ISBN):
+    genres = []
+    def __init__(self, title, author, genre, ISBN):
         self.title = title
         self.author = author
         self.ISBN = ISBN
@@ -17,10 +18,11 @@ class Book:
 
     @classmethod
     # instantiate a Book
-    def create(cls, title, author, ISBN):
+    def create(cls, title, author, genre, ISBN):
         """ this will create a new book """
-        new_book = Book(title, author, ISBN)
+        new_book = Book(title, author, genre, ISBN)
         cls.on_shelf.append(new_book)
+        cls.genres.append(genre)
         return new_book
 
     @classmethod
@@ -55,6 +57,11 @@ class Book:
             return random_book
         else:
             return "There are no books on the shelf, come back tomorrow"
+    @classmethod
+    def browse_genres(cls): 
+        if cls.genres != []:
+            random_genre = random.choice(cls.genres)
+            return random_genre
 
     def borrow(self):
         """ This instance method is how a book is taken out of the library.
@@ -112,25 +119,25 @@ class Book:
         
 
 
-sister_outsider = Book.create("Sister Outsider", "Audre Lorde", "9781515905431")
-aint_i = Book.create("Ain't I a Woman?", "Bell Hooks", "9780896081307")
-if_they_come = Book.create("If They Come in the Morning", "Angela Y. Davis", "0893880221")
+sister_outsider = Book.create("Sister Outsider", "Audre Lorde", 'fiction' , "9781515905431")
+aint_i = Book.create("Ain't I a Woman?", "Bell Hooks", 'fiction', "9780896081307")
+if_they_come = Book.create("If They Come in the Morning", "Angela Y. Davis", 'non-fiction', "0893880221")
 
 
-print()
-Book.browse().title  # "Sister Outsider" (this value may be different for you)
-Book.browse().title  # "Ain't I a Woman?" (this value may be different for you)
-len(Book.on_shelf)  # 3
-len(Book.on_loan)  # 0
-sister_outsider.lent_out()  # False
-sister_outsider.borrow()  # True #######
-len(Book.on_shelf)  # 2
-len(Book.on_loan)  # 1 ######
-sister_outsider.lent_out()  # True
-print(sister_outsider.borrow())  # False
-print(sister_outsider.current_due_date())
-print(sister_outsider.renew())  
-print(sister_outsider.renew())
+print(Book.browse().title)
+# Book.browse().title  # "Ain't I a Woman?" (this value may be different for you)
+# len(Book.on_shelf)  # 3
+# len(Book.on_loan)  # 0
+# sister_outsider.lent_out()  # False
+# sister_outsider.borrow()  # True #######
+# len(Book.on_shelf)  # 2
+# len(Book.on_loan)  # 1 ######
+# sister_outsider.lent_out()  # True
+# print(sister_outsider.borrow())  # False
+# print(sister_outsider.current_due_date())
+# print(sister_outsider.renew())  
+# print(sister_outsider.renew())
+print(Book.browse_genres())
 # print(sister_outsider.current_due_date())
 # print(len(Book.overdue_books()))  # 0
 # print(sister_outsider.return_to_library())  # True
