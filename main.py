@@ -5,7 +5,8 @@ from datetime import datetime
 class Book:
     on_shelf = []
     on_loan = []
-    day = [] 
+    day = []
+    borrowed = 'False' 
     def __init__(self, title, author, ISBN):
         self.title = title
         self.author = author
@@ -27,14 +28,12 @@ class Book:
         now = datetime.now()
         two_weeks = 60 * 60 * 24 * 14  # two weeks expressed in seconds
         future_timestamp = now.timestamp() + two_weeks
-        day = f'{datetime.fromtimestamp(future_timestamp, tz=None).day}'
-        month = f'{datetime.fromtimestamp(future_timestamp, tz=None).month}'
-        year = f'{datetime.fromtimestamp(future_timestamp, tz=None).year}'
-        cls.string = f' Current Due Date {month}/{day}/{year}' 
-        
+        day = f"{datetime.fromtimestamp(future_timestamp, tz=None).day}"
+        month = f"{datetime.fromtimestamp(future_timestamp, tz=None).month}"
+        year = f"{datetime.fromtimestamp(future_timestamp, tz=None).year}"
+        cls.string = f" Current Due Date {month}/{day}/{year}"
+
         return cls.string
-        
-  
 
     @classmethod
     def overdue_books(cls):
@@ -46,7 +45,6 @@ class Book:
                 overdue_book.append(book)
                 if len(overdue_book) == 0:
                     return overdue_book
-
         return overdue_book
 
     @classmethod
@@ -65,8 +63,9 @@ class Book:
         to borrow the book failed. Otherwise, use current_due_date to set the due_date
         of the book and move it from the collection 
         of available books to the collection of books on loan, then return True. """
+        Book.borrowed = 'True'
         if self.lent_out() == True:
-            return f'The Book is already out on loan.'
+            return f"The Book is already out on loan."
         elif self.lent_out() == False:
             self.due_date = Book.current_due_date()
             Book.on_shelf.remove(self)
@@ -94,29 +93,31 @@ class Book:
             return False
         else:
             return True
-    @classmethod
-    def renew(cls): 
-        now = datetime.now()
-        two_weeks = 60 * 60 * 24 * 14  # two weeks expressed in seconds
-        future_timestamp = now.timestamp() + two_weeks * 2
-        day = f'{datetime.fromtimestamp(future_timestamp, tz=None).day}'
-        month = f'{datetime.fromtimestamp(future_timestamp, tz=None).month}'
-        year = f'{datetime.fromtimestamp(future_timestamp, tz=None).year}'
-        cls.string = f' New Due Date {month}/{day}/{year}' 
-        
-        return cls.string
-        
 
+    @classmethod
+    def renew(cls):
         
+        if cls.borrowed == 'False': 
+            now = datetime.now()
+            two_weeks = 60 * 60 * 24 * 14  # two weeks expressed in seconds
+            future_timestamp = now.timestamp() + two_weeks * 2
+            day = f"{datetime.fromtimestamp(future_timestamp, tz=None).day}"
+            month = f"{datetime.fromtimestamp(future_timestamp, tz=None).month}"
+            year = f"{datetime.fromtimestamp(future_timestamp, tz=None).year}"
+            cls.string = f" New Due Date {month}/{day}/{year}"
+            return cls.string
+        else: 
+            return 'You cannot renew this book again'
+
 
 sister_outsider = Book.create("Sister Outsider", "Audre Lorde", "9781515905431")
 aint_i = Book.create("Ain't I a Woman?", "Bell Hooks", "9780896081307")
-if_they_come = Book.create("If They Come in the Morning", "Angela Y. Davis", "0893880221")
+if_they_come = Book.create(
+    "If They Come in the Morning", "Angela Y. Davis", "0893880221"
+)
 
 
-
-
-print( )
+print()
 Book.browse().title  # "Sister Outsider" (this value may be different for you)
 Book.browse().title  # "Ain't I a Woman?" (this value may be different for you)
 len(Book.on_shelf)  # 3
@@ -124,11 +125,13 @@ len(Book.on_loan)  # 0
 sister_outsider.lent_out()  # False
 sister_outsider.borrow()  # True #######
 len(Book.on_shelf)  # 2
-len(Book.on_loan) # 1 ######
+len(Book.on_loan)  # 1 ######
 sister_outsider.lent_out()  # True
 print(sister_outsider.borrow())  # False
 print(sister_outsider.current_due_date())
-print(sister_outsider.renew())  # 2017-02-25 20:52:20 -0500 (this value will be different for you)
+print(sister_outsider.renew())  
+# print(sister_outsider.renew())  
+# print(sister_outsider.current_due_date())
 # print(len(Book.overdue_books()))  # 0
 # print(sister_outsider.return_to_library())  # True
 # print(sister_outsider.lent_out())  # False
